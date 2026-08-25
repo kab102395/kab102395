@@ -1,4 +1,4 @@
-name: Update jet heatmap SVG
+name: Update stateful profile game
 
 on:
   push:
@@ -6,13 +6,18 @@ on:
       - main
     paths-ignore:
       - "github-jet.svg"
+      - "game-state.json"
   schedule:
-    # Runs daily at 05:30 UTC
+    # Daily settlement after GitHub's contribution day has closed in UTC.
     - cron: "30 5 * * *"
   workflow_dispatch: {}
 
 permissions:
   contents: write
+
+concurrency:
+  group: profile-game-main
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -26,20 +31,19 @@ jobs:
         with:
           node-version: 20
 
-      - name: Generate Live GitHub Jet SVG
+      - name: Verify progression rules
+        run: node --test tests/game-profile.test.mjs
+
+      - name: Generate stateful GitHub profile game
         env:
           GH_USERNAME: ${{ github.repository_owner }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT_PATH: github-jet.svg
-        run: node generate.mjs
+          STATE_PATH: game-state.json
+        run: node game-profile.mjs
 
-      - name: Personalize inherited HUD labels
-        run: |
-          sed -i 's/LVL 42 · AIML ARCHITECT/LVL 42 · SOFTWARE ENGINEER/g' github-jet.svg
-          sed -i 's/SECTOR: PRATIK-FORGE/SECTOR: KAB102395/g' github-jet.svg
-
-      - name: Commit and push if changed
+      - name: Commit generated game state and SVG
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: update live jet heatmap SVG [skip ci]"
-          file_pattern: "github-jet.svg"
+          commit_message: "chore(profile): advance game state [skip ci]"
+          file_pattern: "github-jet.svg game-state.json"
