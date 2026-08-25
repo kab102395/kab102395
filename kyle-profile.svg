@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="586" viewBox="0 0 1180 586">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#06111f"/><stop offset="1" stop-color="#02060d"/></linearGradient>
+  <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#22c55e"/><stop offset="1" stop-color="#60a5fa"/></linearGradient>
+  <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#38bdf8" stroke-opacity=".045"/></pattern>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <style>.m{font-family:'Courier New',Consolas,monospace}.k{fill:#4ade80;font-weight:700}.v{fill:#e2e8f0}.u{fill:#64748b}.c{fill:#67e8f9}.t{font-size:13px;letter-spacing:1px}.b{font-size:18px}</style>
+</defs>
+<rect width="1180" height="586" rx="18" fill="url(#bg)"/><rect width="1180" height="586" rx="18" fill="url(#grid)"/><rect x="3" y="3" width="1174" height="580" rx="16" fill="none" stroke="url(#edge)" stroke-width="2"/>
+<g class="m">
+  <rect x="3" y="3" width="1174" height="40" rx="16" fill="#081321"/><circle cx="26" cy="23" r="5" fill="#ef4444"/><circle cx="45" cy="23" r="5" fill="#f59e0b"/><circle cx="64" cy="23" r="5" fill="#10b981"/>
+  <text x="590" y="28" text-anchor="middle" class="t" fill="#86efac">kyle@github ~ % ./profile.sh --live</text><circle cx="1065" cy="23" r="4" fill="#22c55e"><animate attributeName="opacity" values="1;.2;1" dur="1.2s" repeatCount="indefinite"/></circle><text x="1076" y="27" class="t" fill="#86efac">ONLINE</text>
+  <rect x="28" y="70" width="355" height="468" rx="14" fill="#07101c" stroke="#164e63"/><text x="52" y="103" class="t c">SYSTEM.IDENTITY</text>
+  <text x="52" y="165" font-size="66" font-weight="700" fill="#22d3ee" filter="url(#glow)">KAB</text><text x="52" y="202" class="b v">Kyle A. Barrett</text><text x="52" y="234" class="b u">Software Engineer</text>
+  <text x="52" y="292" class="t k">FOCUS</text><text x="52" y="323" class="b v">Oracle APEX / PL/SQL</text><text x="52" y="353" class="b v">Systems &amp; backend engineering</text><text x="52" y="383" class="b v">Rust · Python · Java</text>
+  <text x="52" y="441" class="t k">MODE</text><text x="52" y="472" class="b v">build · debug · ship · learn</text><text x="52" y="512" class="t u">github.com/kab102395</text>
+  <rect x="410" y="70" width="742" height="468" rx="14" fill="#07101c" stroke="#14532d"/><text x="438" y="103" class="t k">SYSTEM.INFO</text>
+  <text x="438" y="150" class="b k">Subject</text><text x="600" y="150" class="b u">..............</text><text x="790" y="150" class="b v">Kyle A. Barrett</text>
+  <text x="438" y="188" class="b k">Role</text><text x="600" y="188" class="b u">.................</text><text x="790" y="188" class="b v">Software Engineer</text>
+  <text x="438" y="226" class="b k">Primary</text><text x="600" y="226" class="b u">..............</text><text x="790" y="226" class="b v">Oracle APEX · PL/SQL</text>
+  <text x="438" y="264" class="b k">Languages</text><text x="600" y="264" class="b u">............</text><text x="790" y="264" class="b v">Rust · Python · Java · JS/TS</text>
+  <text x="438" y="302" class="b k">Platform</text><text x="600" y="302" class="b u">.............</text><text x="790" y="302" class="b v">Oracle DB · REST · Android</text>
+  <text x="438" y="340" class="b k">Workflow</text><text x="600" y="340" class="b u">.............</text><text x="790" y="340" class="b v">Git · GitHub Actions · VS Code</text>
+  <text x="438" y="403" class="t c">CURRENT.STATE</text><text x="438" y="439" class="b v">Engineering practical software across</text><text x="438" y="469" class="b v">database, backend, mobile, and systems layers.</text>
+  <text x="438" y="514" class="t k">LIVE.GITHUB</text><text x="600" y="514" class="b v">@kab102395</text><rect x="438" y="527" width="10" height="18" fill="#22c55e"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>
+</g>
+</svg>
