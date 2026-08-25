@@ -11,6 +11,9 @@ const JET_Y = 294;
 const LOOP_SECONDS = 20;
 const JET_START_X = GRID_X + 5;
 const JET_END_X = GRID_X + 51 * STEP + 5;
+const LEFT_GUN_X = -20.5;
+const RIGHT_GUN_X = 20.5;
+const GUN_Y = -9;
 
 let svg = fs.readFileSync(file, "utf8");
 
@@ -37,9 +40,16 @@ function makeRng(seedText) {
   };
 }
 
+// Must match the SVG animateTransform exactly. This is deliberately linear so
+// combat origins and the rendered ship can never disagree about patrol position.
 function shipXAt(time) {
-  if (time <= 0.5) return JET_START_X + (JET_END_X - JET_START_X) * (time / 0.5);
-  return JET_END_X - (JET_END_X - JET_START_X) * ((time - 0.5) / 0.5);
+  const t = clamp(time, 0, 1);
+  if (t <= 0.5) return JET_START_X + (JET_END_X - JET_START_X) * (t / 0.5);
+  return JET_END_X - (JET_END_X - JET_START_X) * ((t - 0.5) / 0.5);
+}
+
+function muzzleXAt(time, side) {
+  return shipXAt(time) + (side === "left" ? LEFT_GUN_X : RIGHT_GUN_X);
 }
 
 function themeForFill(fill) {
@@ -108,54 +118,77 @@ function pickTargets(tiles, combo) {
 }
 
 function timeline(t) {
-  const t0 = clamp(t - 0.012, 0.001, 0.992);
-  const lock = clamp(t - 0.006, t0 + 0.001, 0.994);
+  // Tight burst: lock precedes fire; beam is bright for only a few frames.
+  const t0 = clamp(t - 0.010, 0.001, 0.992);
+  const lock = clamp(t - 0.004, t0 + 0.001, 0.994);
   const hit = clamp(t, lock + 0.001, 0.996);
-  const fade = clamp(t + 0.010, hit + 0.001, 0.998);
-  const end = clamp(t + 0.020, fade + 0.001, 0.999);
-  return `0;${t0.toFixed(4)};${lock.toFixed(4)};${hit.toFixed(4)};${fade.toFixed(4)};${end.toFixed(4)};1`;
+  const fade = clamp(t + 0.0045, hit + 0.001, 0.998);
+  const end = clamp(t + 0.009, fade + 0.001, 0.999);
+  return { t0, lock, hit, fade, end, keyTimes: `0;${t0.toFixed(4)};${lock.toFixed(4)};${hit.toFixed(4)};${fade.toFixed(4)};${end.toFixed(4)};1` };
+}
+
+function movingMuzzleValues(times, side) {
+  const values = [
+    muzzleXAt(0, side),
+    muzzleXAt(times.t0, side),
+    muzzleXAt(times.lock, side),
+    muzzleXAt(times.hit, side),
+    muzzleXAt(times.fade, side),
+    muzzleXAt(times.end, side),
+    muzzleXAt(1, side),
+  ];
+  return values.map((v) => v.toFixed(1)).join(";");
+}
+
+function buildShot(t, i, shield, combo, forceSide = null, shotAtOverride = null, secondary = false) {
+  const side = forceSide || (i % 2 === 0 ? "left" : "right");
+  const shotAt = shotAtOverride ?? t.shotAt;
+  const times = timeline(shotAt);
+  const muzzleValues = movingMuzzleValues(times, side);
+  const initialMuzzleX = muzzleXAt(shotAt, side).toFixed(1);
+  const muzzleY = JET_Y + GUN_Y;
+  const beamWidth = secondary ? 1.1 : shield >= 65 ? 4.2 : shield >= 30 ? 3.4 : 2.7;
+  const glowOpacity = secondary ? 0.72 : shield >= 65 ? 0.96 : shield >= 30 ? 0.78 : 0.6;
+
+  return `  <g class="combat-shot${secondary ? " combat-shot-secondary" : ""}" data-target-date="${t.date}" data-target-count="${t.count}" data-gun="${side}">
+    ${secondary ? "" : `<g class="target-lock" opacity="0">
+      <circle cx="${t.cx}" cy="${t.cy}" r="12" fill="none" stroke="${t.theme.glow}" stroke-width="1.1" stroke-dasharray="4 3"/>
+      <path d="M${t.cx - 9} ${t.cy - 9} h5 M${t.cx - 9} ${t.cy - 9} v5 M${t.cx + 9} ${t.cy - 9} h-5 M${t.cx + 9} ${t.cy - 9} v5 M${t.cx - 9} ${t.cy + 9} h5 M${t.cx - 9} ${t.cy + 9} v-5 M${t.cx + 9} ${t.cy + 9} h-5 M${t.cx + 9} ${t.cy + 9} v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
+      <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
+    </g>`}
+    <line x1="${initialMuzzleX}" y1="${muzzleY}" x2="${t.cx}" y2="${t.cy}" stroke="${t.theme.glow}" stroke-width="${beamWidth}" opacity="0" filter="url(#laserGlow)">
+      <animate attributeName="x1" values="${muzzleValues}" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite" calcMode="linear"/>
+      <animate attributeName="opacity" values="0;0;0;${glowOpacity};.18;0;0" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
+    </line>
+    <line x1="${initialMuzzleX}" y1="${muzzleY}" x2="${t.cx}" y2="${t.cy}" stroke="${t.theme.core}" stroke-width="${secondary ? 1 : 1.25}" opacity="0">
+      <animate attributeName="x1" values="${muzzleValues}" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite" calcMode="linear"/>
+      <animate attributeName="opacity" values="0;0;0;1;.12;0;0" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="${initialMuzzleX}" cy="${muzzleY}" r="${secondary ? 2.2 : 3}" fill="#FFFFFF" opacity="0" filter="url(#laserGlow)">
+      <animate attributeName="cx" values="${muzzleValues}" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite" calcMode="linear"/>
+      <animate attributeName="opacity" values="0;0;0;1;.08;0;0" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
+    </circle>
+    ${secondary ? "" : `<circle cx="${t.cx}" cy="${t.cy}" r="0" fill="none" stroke="${t.theme.impact}" stroke-width="1.8" opacity="0">
+      <animate attributeName="r" values="0;0;0;3;14;0;0" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;1;.48;0;0" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="${t.cx}" cy="${t.cy}" r="4" fill="#FFFFFF" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;1;.12;0;0" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
+    </circle>`}
+  </g>`;
 }
 
 function buildCombatLayer(targets, shield, combo) {
-  const beamWidth = shield >= 65 ? 4.2 : shield >= 30 ? 3.4 : 2.7;
-  const glowOpacity = shield >= 65 ? 0.96 : shield >= 30 ? 0.78 : 0.6;
-
-  return `<g id="combat-layer">
-${targets.map((t, i) => {
-  const times = timeline(t.shotAt);
-  const shipX = shipXAt(t.shotAt);
-  const cannonOffset = i % 2 === 0 ? -20.5 : 20.5;
-  const muzzleX = shipX + cannonOffset;
-  const muzzleY = JET_Y - 9;
-  const doubleTap = combo >= 16 && i % 4 === 1;
-  const secondAt = clamp(t.shotAt + 0.010, 0.03, 0.98);
-  const secondTimes = timeline(secondAt);
-  return `  <g class="combat-shot" data-target-date="${t.date}" data-target-count="${t.count}">
-    <g class="target-lock" opacity="0">
-      <circle cx="${t.cx}" cy="${t.cy}" r="12" fill="none" stroke="${t.theme.glow}" stroke-width="1.1" stroke-dasharray="4 3"/>
-      <path d="M${t.cx - 9} ${t.cy - 9} h5 M${t.cx - 9} ${t.cy - 9} v5 M${t.cx + 9} ${t.cy - 9} h-5 M${t.cx + 9} ${t.cy - 9} v5 M${t.cx - 9} ${t.cy + 9} h5 M${t.cx - 9} ${t.cy + 9} v-5 M${t.cx + 9} ${t.cy + 9} h-5 M${t.cx + 9} ${t.cy + 9} v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
-      <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="${times}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
-    </g>
-    <line x1="${muzzleX.toFixed(1)}" y1="${muzzleY}" x2="${t.cx}" y2="${t.cy}" stroke="${t.theme.glow}" stroke-width="${beamWidth}" opacity="0" filter="url(#laserGlow)">
-      <animate attributeName="opacity" values="0;0;0;${glowOpacity};.2;0;0" keyTimes="${times}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
-    </line>
-    <line x1="${muzzleX.toFixed(1)}" y1="${muzzleY}" x2="${t.cx}" y2="${t.cy}" stroke="${t.theme.core}" stroke-width="1.25" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;1;.15;0;0" keyTimes="${times}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
-    </line>
-    <circle cx="${muzzleX.toFixed(1)}" cy="${muzzleY}" r="3" fill="#FFFFFF" opacity="0" filter="url(#laserGlow)">
-      <animate attributeName="opacity" values="0;0;0;1;.1;0;0" keyTimes="${times}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="${t.cx}" cy="${t.cy}" r="0" fill="none" stroke="${t.theme.impact}" stroke-width="1.8" opacity="0">
-      <animate attributeName="r" values="0;0;0;3;14;0;0" keyTimes="${times}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0;0;0;1;.48;0;0" keyTimes="${times}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="${t.cx}" cy="${t.cy}" r="4" fill="#FFFFFF" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;1;.12;0;0" keyTimes="${times}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
-    </circle>
-    ${doubleTap ? `<line x1="${(shipX - cannonOffset).toFixed(1)}" y1="${muzzleY}" x2="${t.cx}" y2="${t.cy}" stroke="${t.theme.core}" stroke-width="1.05" opacity="0"><animate attributeName="opacity" values="0;0;0;.85;.12;0;0" keyTimes="${secondTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/></line>` : ""}
-  </g>`;
-}).join("\n")}
-</g>`;
+  const shots = [];
+  targets.forEach((t, i) => {
+    const primarySide = i % 2 === 0 ? "left" : "right";
+    shots.push(buildShot(t, i, shield, combo, primarySide));
+    if (combo >= 16 && i % 4 === 1) {
+      const opposite = primarySide === "left" ? "right" : "left";
+      shots.push(buildShot(t, i, shield, combo, opposite, clamp(t.shotAt + 0.011, 0.03, 0.985), true));
+    }
+  });
+  return `<g id="combat-layer">\n${shots.join("\n")}\n</g>`;
 }
 
 function buildShield(shield, color) {
@@ -194,9 +227,20 @@ const endMarker = '\n\n  <text x="24" y="340"';
 const end = svg.indexOf(endMarker, start);
 if (start < 0 || end < 0) throw new Error("Could not locate stateful jet block");
 
+// Remove any previously inserted combat layer before regenerating it.
+const combatStart = svg.indexOf('  <g id="combat-layer">');
+if (combatStart >= 0 && combatStart < start) {
+  const combatEnd = svg.indexOf('\n  <g id="jet"', combatStart);
+  if (combatEnd > combatStart) {
+    svg = svg.slice(0, combatStart) + svg.slice(combatEnd);
+  }
+}
+
+const refreshedStart = svg.indexOf('  <g id="jet"');
+const refreshedEnd = svg.indexOf(endMarker, refreshedStart);
 const combat = buildCombatLayer(targets, shield, combo);
 const ship = `  <g id="jet" transform="translate(${JET_START_X} ${JET_Y})">
-    <animateTransform attributeName="transform" type="translate" values="${JET_START_X} ${JET_Y};${JET_END_X} ${JET_Y};${JET_START_X} ${JET_Y}" keyTimes="0;.5;1" dur="${LOOP_SECONDS}s" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"/>
+    <animateTransform attributeName="transform" type="translate" values="${JET_START_X} ${JET_Y};${JET_END_X} ${JET_Y};${JET_START_X} ${JET_Y}" keyTimes="0;.5;1" dur="${LOOP_SECONDS}s" repeatCount="indefinite" calcMode="linear"/>
 
     ${buildShield(shield, shieldColor)}
 
@@ -214,8 +258,8 @@ const ship = `  <g id="jet" transform="translate(${JET_START_X} ${JET_Y})">
     <!-- Twin wingtip railguns -->
     <rect x="-22" y="-9" width="3" height="20" rx="1" fill="#7DD3FC" stroke="#0284C7" stroke-width=".7"/>
     <rect x="19" y="-9" width="3" height="20" rx="1" fill="#7DD3FC" stroke="#0284C7" stroke-width=".7"/>
-    <circle cx="-20.5" cy="-9" r="2" fill="#22D3EE" filter="url(#glow)"><animate attributeName="opacity" values=".5;1;.5" dur=".55s" repeatCount="indefinite"/></circle>
-    <circle cx="20.5" cy="-9" r="2" fill="#22D3EE" filter="url(#glow)"><animate attributeName="opacity" values=".5;1;.5" dur=".55s" repeatCount="indefinite"/></circle>
+    <circle cx="${LEFT_GUN_X}" cy="${GUN_Y}" r="2" fill="#22D3EE" filter="url(#glow)"><animate attributeName="opacity" values=".5;1;.5" dur=".55s" repeatCount="indefinite"/></circle>
+    <circle cx="${RIGHT_GUN_X}" cy="${GUN_Y}" r="2" fill="#22D3EE" filter="url(#glow)"><animate attributeName="opacity" values=".5;1;.5" dur=".55s" repeatCount="indefinite"/></circle>
 
     <!-- Dual-hull interceptor -->
     <polygon points="-15,-17 -7,-17 -5,10 -17,10" fill="#38BDF8" stroke="#E0F2FE" stroke-width="1.1"/>
@@ -231,7 +275,7 @@ const ship = `  <g id="jet" transform="translate(${JET_START_X} ${JET_Y})">
     <polygon points="9,10 13,10 11,18" fill="#FFFFFF"><animate attributeName="opacity" values=".7;1;.7" dur=".18s" repeatCount="indefinite"/></polygon>
   </g>`;
 
-svg = svg.slice(0, start) + `  ${combat}\n` + ship + svg.slice(end);
-svg = svg.replace(/STATEFUL PROFILE ENGINE v2/g, "STATEFUL PROFILE ENGINE v3 · COMBAT ONLINE");
+svg = svg.slice(0, refreshedStart) + combat + "\n" + ship + svg.slice(refreshedEnd);
+svg = svg.replace(/STATEFUL PROFILE ENGINE v\d+(?: · COMBAT ONLINE)?/g, "STATEFUL PROFILE ENGINE v4 · MUZZLE LOCKED");
 fs.writeFileSync(file, svg, "utf8");
-console.log(`Combat renderer online: ${targets.length} daily-seeded targets, combo x${combo}, shield ${shield}%.`);
+console.log(`Combat regenerated with ${targets.length} primary targets; beams track moving railgun muzzles exactly.`);
