@@ -48,6 +48,12 @@ jobs:
           OUTPUT_PATH: github-jet.svg
         run: node upgrade-ship.mjs
 
+      - name: Animate fire-control reticle locks
+        env:
+          GH_USERNAME: ${{ github.repository_owner }}
+          OUTPUT_PATH: github-jet.svg
+        run: node reticle-lock.mjs
+
       - name: Commit generated game state and SVG
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
