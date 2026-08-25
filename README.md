@@ -4,11 +4,9 @@
 
 <br>
 
-<!--
-  The live GitHub Jet heatmap will be re-enabled here after this fork's
-  GitHub Actions workflow has generated a Kyle-specific github-jet.svg.
-  The inherited upstream SVG is intentionally not displayed.
--->
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kab102395/kab102395/main/github-jet.svg" alt="Kyle's GitHub Jet contribution heatmap" width="100%" />
+</p>
 
 <p align="center">
   <sub>
