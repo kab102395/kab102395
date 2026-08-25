@@ -42,8 +42,9 @@ jobs:
           STATE_PATH: game-state.json
         run: node game-profile.mjs
 
-      - name: Restore dual-hull interceptor artwork
+      - name: Restore dual-hull interceptor artwork and combat
         env:
+          GH_USERNAME: ${{ github.repository_owner }}
           OUTPUT_PATH: github-jet.svg
         run: node upgrade-ship.mjs
 
