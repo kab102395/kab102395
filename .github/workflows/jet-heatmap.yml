@@ -1,6 +1,12 @@
 name: Update jet heatmap SVG
 
 on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "github-jet.svg"
+      - "dist/github-jet.svg"
   schedule:
     # Runs daily at 05:30 UTC
     - cron: "30 5 * * *"
