@@ -6,7 +6,6 @@ on:
       - main
     paths-ignore:
       - "github-jet.svg"
-      - "dist/github-jet.svg"
   schedule:
     # Runs daily at 05:30 UTC
     - cron: "30 5 * * *"
@@ -31,11 +30,16 @@ jobs:
         env:
           GH_USERNAME: ${{ github.repository_owner }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OUTPUT_PATH: dist/github-jet.svg
+          OUTPUT_PATH: github-jet.svg
         run: node generate.mjs
+
+      - name: Personalize inherited HUD labels
+        run: |
+          sed -i 's/LVL 42 · AIML ARCHITECT/LVL 42 · SOFTWARE ENGINEER/g' github-jet.svg
+          sed -i 's/SECTOR: PRATIK-FORGE/SECTOR: KAB102395/g' github-jet.svg
 
       - name: Commit and push if changed
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update live jet heatmap SVG [skip ci]"
-          file_pattern: "dist/github-jet.svg github-jet.svg"
+          file_pattern: "github-jet.svg"
