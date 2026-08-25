@@ -411,6 +411,8 @@
 <g id="combat-layer">
   <g class="combat-shot" data-target-date="2026-05-08" data-target-count="31" data-gun="left">
     <g class="target-lock" opacity="0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;-10.6 -3.6;1.0 -5.5;0 0;0 0;0 0;0 0" keyTimes="0;0.3408;0.3468;0.3508;0.3553;0.3598;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
+      <animateTransform attributeName="transform" additive="sum" type="rotate" values="0;18;-10;0;0;0;0" keyTimes="0;0.3408;0.3468;0.3508;0.3553;0.3598;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
       <circle cx="763.5" cy="152.5" r="12" fill="none" stroke="#10B981" stroke-width="1.1" stroke-dasharray="4 3"/>
       <path d="M754.5 143.5 h5 M754.5 143.5 v5 M772.5 143.5 h-5 M772.5 143.5 v5 M754.5 161.5 h5 M754.5 161.5 v-5 M772.5 161.5 h-5 M772.5 161.5 v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
       <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="0;0.3408;0.3468;0.3508;0.3553;0.3598;1" dur="20s" repeatCount="indefinite"/>
@@ -437,6 +439,8 @@
   </g>
   <g class="combat-shot" data-target-date="2026-06-26" data-target-count="46" data-gun="right">
     <g class="target-lock" opacity="0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;-13.7 1.3;-4.6 -5.2;0 0;0 0;0 0;0 0" keyTimes="0;0.4149;0.4209;0.4249;0.4294;0.4339;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
+      <animateTransform attributeName="transform" additive="sum" type="rotate" values="0;18;-10;0;0;0;0" keyTimes="0;0.4149;0.4209;0.4249;0.4294;0.4339;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
       <circle cx="882.5" cy="152.5" r="12" fill="none" stroke="#10B981" stroke-width="1.1" stroke-dasharray="4 3"/>
       <path d="M873.5 143.5 h5 M873.5 143.5 v5 M891.5 143.5 h-5 M891.5 143.5 v5 M873.5 161.5 h5 M873.5 161.5 v-5 M891.5 161.5 h-5 M891.5 161.5 v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
       <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="0;0.4149;0.4209;0.4249;0.4294;0.4339;1" dur="20s" repeatCount="indefinite"/>
@@ -463,6 +467,8 @@
   </g>
   <g class="combat-shot" data-target-date="2026-07-24" data-target-count="67" data-gun="left">
     <g class="target-lock" opacity="0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;-5.0 11.6;-5.8 -2.4;0 0;0 0;0 0;0 0" keyTimes="0;0.4442;0.4502;0.4542;0.4587;0.4632;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
+      <animateTransform attributeName="transform" additive="sum" type="rotate" values="0;18;-10;0;0;0;0" keyTimes="0;0.4442;0.4502;0.4542;0.4587;0.4632;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
       <circle cx="950.5" cy="152.5" r="12" fill="none" stroke="#22C55E" stroke-width="1.1" stroke-dasharray="4 3"/>
       <path d="M941.5 143.5 h5 M941.5 143.5 v5 M959.5 143.5 h-5 M959.5 143.5 v5 M941.5 161.5 h5 M941.5 161.5 v-5 M959.5 161.5 h-5 M959.5 161.5 v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
       <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="0;0.4442;0.4502;0.4542;0.4587;0.4632;1" dur="20s" repeatCount="indefinite"/>
@@ -489,6 +495,8 @@
   </g>
   <g class="combat-shot" data-target-date="2026-07-26" data-target-count="341" data-gun="right">
     <g class="target-lock" opacity="0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;-13.5 -0.1;2.2 -6.4;0 0;0 0;0 0;0 0" keyTimes="0;0.4451;0.4511;0.4551;0.4596;0.4641;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
+      <animateTransform attributeName="transform" additive="sum" type="rotate" values="0;18;-10;0;0;0;0" keyTimes="0;0.4451;0.4511;0.4551;0.4596;0.4641;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
       <circle cx="950.5" cy="186.5" r="12" fill="none" stroke="#FACC15" stroke-width="1.1" stroke-dasharray="4 3"/>
       <path d="M941.5 177.5 h5 M941.5 177.5 v5 M959.5 177.5 h-5 M959.5 177.5 v5 M941.5 195.5 h5 M941.5 195.5 v-5 M959.5 195.5 h-5 M959.5 195.5 v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
       <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="0;0.4451;0.4511;0.4551;0.4596;0.4641;1" dur="20s" repeatCount="indefinite"/>
@@ -515,6 +523,8 @@
   </g>
   <g class="combat-shot" data-target-date="2026-07-22" data-target-count="109" data-gun="left">
     <g class="target-lock" opacity="0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;-4.4 -13.5;7.0 1.2;0 0;0 0;0 0;0 0" keyTimes="0;0.4455;0.4515;0.4555;0.4600;0.4645;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
+      <animateTransform attributeName="transform" additive="sum" type="rotate" values="0;18;-10;0;0;0;0" keyTimes="0;0.4455;0.4515;0.4555;0.4600;0.4645;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
       <circle cx="950.5" cy="118.5" r="12" fill="none" stroke="#22C55E" stroke-width="1.1" stroke-dasharray="4 3"/>
       <path d="M941.5 109.5 h5 M941.5 109.5 v5 M959.5 109.5 h-5 M959.5 109.5 v5 M941.5 127.5 h5 M941.5 127.5 v-5 M959.5 127.5 h-5 M959.5 127.5 v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
       <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="0;0.4455;0.4515;0.4555;0.4600;0.4645;1" dur="20s" repeatCount="indefinite"/>
@@ -541,6 +551,8 @@
   </g>
   <g class="combat-shot" data-target-date="2026-08-04" data-target-count="28" data-gun="right">
     <g class="target-lock" opacity="0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;7.1 -13.7;6.4 4.3;0 0;0 0;0 0;0 0" keyTimes="0;0.4619;0.4679;0.4719;0.4764;0.4809;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
+      <animateTransform attributeName="transform" additive="sum" type="rotate" values="0;18;-10;0;0;0;0" keyTimes="0;0.4619;0.4679;0.4719;0.4764;0.4809;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
       <circle cx="967.5" cy="220.5" r="12" fill="none" stroke="#10B981" stroke-width="1.1" stroke-dasharray="4 3"/>
       <path d="M958.5 211.5 h5 M958.5 211.5 v5 M976.5 211.5 h-5 M976.5 211.5 v5 M958.5 229.5 h5 M958.5 229.5 v-5 M976.5 229.5 h-5 M976.5 229.5 v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
       <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="0;0.4619;0.4679;0.4719;0.4764;0.4809;1" dur="20s" repeatCount="indefinite"/>
@@ -567,6 +579,8 @@
   </g>
   <g class="combat-shot" data-target-date="2026-08-24" data-target-count="254" data-gun="left">
     <g class="target-lock" opacity="0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;12.5 4.5;-3.4 5.7;0 0;0 0;0 0;0 0" keyTimes="0;0.4857;0.4917;0.4957;0.5002;0.5047;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
+      <animateTransform attributeName="transform" additive="sum" type="rotate" values="0;18;-10;0;0;0;0" keyTimes="0;0.4857;0.4917;0.4957;0.5002;0.5047;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
       <circle cx="1018.5" cy="203.5" r="12" fill="none" stroke="#FACC15" stroke-width="1.1" stroke-dasharray="4 3"/>
       <path d="M1009.5 194.5 h5 M1009.5 194.5 v5 M1027.5 194.5 h-5 M1027.5 194.5 v5 M1009.5 212.5 h5 M1009.5 212.5 v-5 M1027.5 212.5 h-5 M1027.5 212.5 v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
       <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="0;0.4857;0.4917;0.4957;0.5002;0.5047;1" dur="20s" repeatCount="indefinite"/>
@@ -593,6 +607,8 @@
   </g>
   <g class="combat-shot" data-target-date="2026-08-22" data-target-count="228" data-gun="right">
     <g class="target-lock" opacity="0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;11.5 -1.2;-0.3 5.8;0 0;0 0;0 0;0 0" keyTimes="0;0.4879;0.4939;0.4979;0.5024;0.5069;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
+      <animateTransform attributeName="transform" additive="sum" type="rotate" values="0;18;-10;0;0;0;0" keyTimes="0;0.4879;0.4939;0.4979;0.5024;0.5069;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
       <circle cx="1018.5" cy="169.5" r="12" fill="none" stroke="#84CC16" stroke-width="1.1" stroke-dasharray="4 3"/>
       <path d="M1009.5 160.5 h5 M1009.5 160.5 v5 M1027.5 160.5 h-5 M1027.5 160.5 v5 M1009.5 178.5 h5 M1009.5 178.5 v-5 M1027.5 178.5 h-5 M1027.5 178.5 v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
       <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="0;0.4879;0.4939;0.4979;0.5024;0.5069;1" dur="20s" repeatCount="indefinite"/>
@@ -619,6 +635,8 @@
   </g>
   <g class="combat-shot" data-target-date="2026-07-21" data-target-count="42" data-gun="left">
     <g class="target-lock" opacity="0">
+      <animateTransform attributeName="transform" type="translate" values="0 0;-9.6 -1.5;4.1 -2.5;0 0;0 0;0 0;0 0" keyTimes="0;0.5359;0.5419;0.5459;0.5504;0.5549;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
+      <animateTransform attributeName="transform" additive="sum" type="rotate" values="0;18;-10;0;0;0;0" keyTimes="0;0.5359;0.5419;0.5459;0.5504;0.5549;1" dur="20s" repeatCount="indefinite" calcMode="linear"/>
       <circle cx="933.5" cy="220.5" r="12" fill="none" stroke="#10B981" stroke-width="1.1" stroke-dasharray="4 3"/>
       <path d="M924.5 211.5 h5 M924.5 211.5 v5 M942.5 211.5 h-5 M942.5 211.5 v5 M924.5 229.5 h5 M924.5 229.5 v-5 M942.5 229.5 h-5 M942.5 229.5 v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
       <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="0;0.5359;0.5419;0.5459;0.5504;0.5549;1" dur="20s" repeatCount="indefinite"/>
