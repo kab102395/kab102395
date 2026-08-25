@@ -40,8 +40,6 @@ function makeRng(seedText) {
   };
 }
 
-// Must match the SVG animateTransform exactly. This is deliberately linear so
-// combat origins and the rendered ship can never disagree about patrol position.
 function shipXAt(time) {
   const t = clamp(time, 0, 1);
   if (t <= 0.5) return JET_START_X + (JET_END_X - JET_START_X) * (t / 0.5);
@@ -95,7 +93,7 @@ function pickTargets(tiles, combo) {
   if (!tiles.length) return [];
   const dateSeed = new Date().toISOString().slice(0, 10);
   const rng = makeRng(`${username}:${dateSeed}:${combo}`);
-  const desired = Math.min(14, Math.max(8, 8 + Math.floor(combo / 8)));
+  const desired = Math.min(12, Math.max(7, 7 + Math.floor(combo / 10)));
   const candidates = tiles
     .map((tile) => ({ ...tile, weight: tile.count * 2 + rng() * 10 }))
     .sort((a, b) => b.weight - a.weight);
@@ -112,13 +110,12 @@ function pickTargets(tiles, combo) {
     const forwardPass = rng() > 0.34;
     const colFraction = clamp(tile.col / 51, 0, 1);
     const aligned = forwardPass ? colFraction * 0.5 : 1 - colFraction * 0.5;
-    const shotAt = clamp(aligned + (rng() - 0.5) * 0.018, 0.025, 0.975);
+    const shotAt = clamp(aligned + (rng() - 0.5) * 0.018, 0.035, 0.965);
     return { ...tile, index, shotAt, theme: themeForFill(tile.fill) };
   }).sort((a, b) => a.shotAt - b.shotAt);
 }
 
 function timeline(t) {
-  // Tight burst: lock precedes fire; beam is bright for only a few frames.
   const t0 = clamp(t - 0.010, 0.001, 0.992);
   const lock = clamp(t - 0.004, t0 + 0.001, 0.994);
   const hit = clamp(t, lock + 0.001, 0.996);
@@ -128,7 +125,7 @@ function timeline(t) {
 }
 
 function movingMuzzleValues(times, side) {
-  const values = [
+  return [
     muzzleXAt(0, side),
     muzzleXAt(times.t0, side),
     muzzleXAt(times.lock, side),
@@ -136,11 +133,10 @@ function movingMuzzleValues(times, side) {
     muzzleXAt(times.fade, side),
     muzzleXAt(times.end, side),
     muzzleXAt(1, side),
-  ];
-  return values.map((v) => v.toFixed(1)).join(";");
+  ].map((v) => v.toFixed(1)).join(";");
 }
 
-function buildShot(t, i, shield, combo, forceSide = null, shotAtOverride = null, secondary = false) {
+function buildShot(t, i, shield, forceSide = null, shotAtOverride = null, secondary = false) {
   const side = forceSide || (i % 2 === 0 ? "left" : "right");
   const shotAt = shotAtOverride ?? t.shotAt;
   const times = timeline(shotAt);
@@ -151,11 +147,6 @@ function buildShot(t, i, shield, combo, forceSide = null, shotAtOverride = null,
   const glowOpacity = secondary ? 0.72 : shield >= 65 ? 0.96 : shield >= 30 ? 0.78 : 0.6;
 
   return `  <g class="combat-shot${secondary ? " combat-shot-secondary" : ""}" data-target-date="${t.date}" data-target-count="${t.count}" data-gun="${side}">
-    ${secondary ? "" : `<g class="target-lock" opacity="0">
-      <circle cx="${t.cx}" cy="${t.cy}" r="12" fill="none" stroke="${t.theme.glow}" stroke-width="1.1" stroke-dasharray="4 3"/>
-      <path d="M${t.cx - 9} ${t.cy - 9} h5 M${t.cx - 9} ${t.cy - 9} v5 M${t.cx + 9} ${t.cy - 9} h-5 M${t.cx + 9} ${t.cy - 9} v5 M${t.cx - 9} ${t.cy + 9} h5 M${t.cx - 9} ${t.cy + 9} v-5 M${t.cx + 9} ${t.cy + 9} h-5 M${t.cx + 9} ${t.cy + 9} v-5" stroke="#FACC15" stroke-width="1.15" fill="none"/>
-      <animate attributeName="opacity" values="0;0;.35;.95;0;0;0" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
-    </g>`}
     <line x1="${initialMuzzleX}" y1="${muzzleY}" x2="${t.cx}" y2="${t.cy}" stroke="${t.theme.glow}" stroke-width="${beamWidth}" opacity="0" filter="url(#laserGlow)">
       <animate attributeName="x1" values="${muzzleValues}" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite" calcMode="linear"/>
       <animate attributeName="opacity" values="0;0;0;${glowOpacity};.18;0;0" keyTimes="${times.keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
@@ -178,17 +169,81 @@ function buildShot(t, i, shield, combo, forceSide = null, shotAtOverride = null,
   </g>`;
 }
 
+function buildSingleReticle(targets) {
+  if (!targets.length) return "";
+  const dateSeed = new Date().toISOString().slice(0, 10);
+  const points = [{ time: 0, x: targets[0].cx, y: targets[0].cy, opacity: 0 }];
+  let lastTime = 0;
+
+  targets.forEach((target, index) => {
+    const rng = makeRng(`${username}:${dateSeed}:reticle:${target.date}:${index}`);
+    const previousShot = index === 0 ? 0 : targets[index - 1].shotAt;
+    const available = Math.max(0.012, target.shotAt - previousShot);
+    const lead = Math.min(0.050, Math.max(0.020, available * 0.55));
+    const approach = Math.max(lastTime + 0.001, target.shotAt - lead);
+    const scan = Math.max(approach + 0.001, target.shotAt - lead * 0.48);
+    const lock = Math.max(scan + 0.001, target.shotAt - 0.006);
+    const hit = Math.max(lock + 0.001, target.shotAt);
+    const release = Math.max(hit + 0.001, Math.min(0.995, target.shotAt + 0.008));
+
+    const r1 = 8 + rng() * 8;
+    const a1 = rng() * Math.PI * 2;
+    const r2 = 3 + rng() * 4;
+    const a2 = a1 + 1.1 + rng() * 1.5;
+
+    points.push(
+      { time: approach, x: target.cx + Math.cos(a1) * r1, y: target.cy + Math.sin(a1) * r1, opacity: 0.55 },
+      { time: scan, x: target.cx + Math.cos(a2) * r2, y: target.cy + Math.sin(a2) * r2, opacity: 0.78 },
+      { time: lock, x: target.cx, y: target.cy, opacity: 1 },
+      { time: hit, x: target.cx, y: target.cy, opacity: 1 },
+      { time: release, x: target.cx, y: target.cy, opacity: 0.58 }
+    );
+    lastTime = release;
+  });
+
+  const finalTarget = targets.at(-1);
+  points.push({ time: 1, x: finalTarget.cx, y: finalTarget.cy, opacity: 0 });
+
+  const normalized = [];
+  let prev = -1;
+  for (const point of points.sort((a, b) => a.time - b.time)) {
+    let time = clamp(point.time, 0, 1);
+    if (time <= prev) time = Math.min(1, prev + 0.0005);
+    if (time > 1) break;
+    normalized.push({ ...point, time });
+    prev = time;
+  }
+
+  const keyTimes = normalized.map((p) => p.time.toFixed(4)).join(";");
+  const positions = normalized.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(";");
+  const opacity = normalized.map((p) => p.opacity.toFixed(2)).join(";");
+
+  return `<g id="fire-control-reticle" transform="translate(${targets[0].cx} ${targets[0].cy})" opacity="0">
+    <animateTransform attributeName="transform" type="translate" values="${positions}" keyTimes="${keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite" calcMode="linear"/>
+    <animate attributeName="opacity" values="${opacity}" keyTimes="${keyTimes}" dur="${LOOP_SECONDS}s" repeatCount="indefinite"/>
+    <circle cx="0" cy="0" r="16" fill="none" stroke="#22D3EE" stroke-width="1.3" opacity=".82"/>
+    <circle cx="0" cy="0" r="24" fill="none" stroke="#38BDF8" stroke-width=".9" stroke-dasharray="6 3" opacity=".5">
+      <animate attributeName="stroke-dashoffset" values="0;18" dur="1.2s" repeatCount="indefinite"/>
+    </circle>
+    <line x1="0" y1="-14" x2="0" y2="-6" stroke="#22D3EE" stroke-width="1.5"/>
+    <line x1="0" y1="6" x2="0" y2="14" stroke="#22D3EE" stroke-width="1.5"/>
+    <line x1="-14" y1="0" x2="-6" y2="0" stroke="#22D3EE" stroke-width="1.5"/>
+    <line x1="6" y1="0" x2="14" y2="0" stroke="#22D3EE" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="2" fill="#FACC15"><animate attributeName="opacity" values="1;.28;1" dur=".65s" repeatCount="indefinite"/></circle>
+  </g>`;
+}
+
 function buildCombatLayer(targets, shield, combo) {
   const shots = [];
   targets.forEach((t, i) => {
     const primarySide = i % 2 === 0 ? "left" : "right";
-    shots.push(buildShot(t, i, shield, combo, primarySide));
+    shots.push(buildShot(t, i, shield, primarySide));
     if (combo >= 16 && i % 4 === 1) {
       const opposite = primarySide === "left" ? "right" : "left";
-      shots.push(buildShot(t, i, shield, combo, opposite, clamp(t.shotAt + 0.011, 0.03, 0.985), true));
+      shots.push(buildShot(t, i, shield, opposite, clamp(t.shotAt + 0.011, 0.03, 0.985), true));
     }
   });
-  return `<g id="combat-layer">\n${shots.join("\n")}\n</g>`;
+  return `<g id="combat-layer">\n${buildSingleReticle(targets)}\n${shots.join("\n")}\n</g>`;
 }
 
 function buildShield(shield, color) {
@@ -197,14 +252,12 @@ function buildShield(shield, color) {
   const background = `<circle cx="0" cy="0" r="${radius}" fill="none" stroke="#162033" stroke-width="2.5" opacity=".72"/>`;
 
   if (shield >= 99.95) {
-    return `${background}
-    <circle data-shield-state="full" cx="0" cy="0" r="${radius}" fill="none" stroke="${color}" stroke-width="3" filter="url(#glow)" opacity=".94"><animate attributeName="opacity" values=".64;1;.64" dur="2s" repeatCount="indefinite"/></circle>`;
+    return `${background}\n    <circle data-shield-state="full" cx="0" cy="0" r="${radius}" fill="none" stroke="${color}" stroke-width="3" filter="url(#glow)" opacity=".94"><animate attributeName="opacity" values=".64;1;.64" dur="2s" repeatCount="indefinite"/></circle>`;
   }
 
   const arc = circumference * (shield / 100);
   const gap = Math.max(0.1, circumference - arc);
-  return `${background}
-    <circle data-shield-state="partial" cx="0" cy="0" r="${radius}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${arc.toFixed(2)} ${gap.toFixed(2)}" transform="rotate(-90)" filter="url(#glow)" opacity=".9"><animate attributeName="opacity" values=".5;1;.5" dur="2s" repeatCount="indefinite"/></circle>`;
+  return `${background}\n    <circle data-shield-state="partial" cx="0" cy="0" r="${radius}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${arc.toFixed(2)} ${gap.toFixed(2)}" transform="rotate(-90)" filter="url(#glow)" opacity=".9"><animate attributeName="opacity" values=".5;1;.5" dur="2s" repeatCount="indefinite"/></circle>`;
 }
 
 function ensureDefs() {
@@ -227,13 +280,10 @@ const endMarker = '\n\n  <text x="24" y="340"';
 const end = svg.indexOf(endMarker, start);
 if (start < 0 || end < 0) throw new Error("Could not locate stateful jet block");
 
-// Remove any previously inserted combat layer before regenerating it.
 const combatStart = svg.indexOf('  <g id="combat-layer">');
 if (combatStart >= 0 && combatStart < start) {
   const combatEnd = svg.indexOf('\n  <g id="jet"', combatStart);
-  if (combatEnd > combatStart) {
-    svg = svg.slice(0, combatStart) + svg.slice(combatEnd);
-  }
+  if (combatEnd > combatStart) svg = svg.slice(0, combatStart) + svg.slice(combatEnd);
 }
 
 const refreshedStart = svg.indexOf('  <g id="jet"');
@@ -243,14 +293,6 @@ const ship = `  <g id="jet" transform="translate(${JET_START_X} ${JET_Y})">
     <animateTransform attributeName="transform" type="translate" values="${JET_START_X} ${JET_Y};${JET_END_X} ${JET_Y};${JET_START_X} ${JET_Y}" keyTimes="0;.5;1" dur="${LOOP_SECONDS}s" repeatCount="indefinite" calcMode="linear"/>
 
     ${buildShield(shield, shieldColor)}
-
-    <!-- Forward targeting system -->
-    <line x1="0" y1="-20" x2="0" y2="-105" stroke="#22D3EE" stroke-width="1" stroke-dasharray="4 3" opacity=".5"/>
-    <circle cx="0" cy="-68" r="16" fill="none" stroke="#22D3EE" stroke-width="1.2" opacity=".7"/>
-    <circle cx="0" cy="-68" r="24" fill="none" stroke="#38BDF8" stroke-width=".9" stroke-dasharray="6 3" opacity=".42"/>
-    <line x1="0" y1="-82" x2="0" y2="-74" stroke="#22D3EE" stroke-width="1.4"/><line x1="0" y1="-62" x2="0" y2="-54" stroke="#22D3EE" stroke-width="1.4"/>
-    <line x1="-14" y1="-68" x2="-6" y2="-68" stroke="#22D3EE" stroke-width="1.4"/><line x1="6" y1="-68" x2="14" y2="-68" stroke="#22D3EE" stroke-width="1.4"/>
-    <circle cx="0" cy="-68" r="2" fill="#FACC15"><animate attributeName="opacity" values="1;.25;1" dur=".65s" repeatCount="indefinite"/></circle>
 
     <!-- Ion wake -->
     <ellipse cx="0" cy="20" rx="15" ry="3" fill="url(#ionGlow)" opacity=".38"><animate attributeName="rx" values="12;19;14;18" dur=".22s" repeatCount="indefinite"/><animate attributeName="opacity" values=".25;.7;.2;.6" dur=".22s" repeatCount="indefinite"/></ellipse>
@@ -276,6 +318,6 @@ const ship = `  <g id="jet" transform="translate(${JET_START_X} ${JET_Y})">
   </g>`;
 
 svg = svg.slice(0, refreshedStart) + combat + "\n" + ship + svg.slice(refreshedEnd);
-svg = svg.replace(/STATEFUL PROFILE ENGINE v\d+(?: · COMBAT ONLINE)?/g, "STATEFUL PROFILE ENGINE v4 · MUZZLE LOCKED");
+svg = svg.replace(/STATEFUL PROFILE ENGINE v\d+(?: · [^<]+)?/g, "STATEFUL PROFILE ENGINE v5 · SINGLE FIRE CONTROL");
 fs.writeFileSync(file, svg, "utf8");
-console.log(`Combat regenerated with ${targets.length} primary targets; beams track moving railgun muzzles exactly.`);
+console.log(`Combat regenerated with one moving reticle and ${targets.length} synced primary targets.`);
