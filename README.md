@@ -1,11 +1,21 @@
-<a href="https://github.com/pratikforge/pratikforge">
+<a href="https://github.com/kab102395/kab102395">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/pratikforge/pratikforge/main/dark.svg?v=17">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/pratikforge/pratikforge/main/light.svg?v=17">
-    <img alt="GitHub Profile README" src="https://raw.githubusercontent.com/pratikforge/pratikforge/main/dark.svg?v=17" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kab102395/kab102395/main/dark.svg?v=1">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kab102395/kab102395/main/light.svg?v=1">
+    <img alt="Kyle A. Barrett — GitHub Profile" src="https://raw.githubusercontent.com/kab102395/kab102395/main/dark.svg?v=1" width="100%">
   </picture>
 </a>
+
 <br>
+
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pratikforge/pratikforge/main/github-jet.svg?v=23" alt="GitHub Jet Heatmap" width="100%" />
+  <img src="https://raw.githubusercontent.com/kab102395/kab102395/main/github-jet.svg?v=1" alt="Kyle's GitHub Jet contribution heatmap" width="100%" />
+</p>
+
+<p align="center">
+  <sub>
+    Profile visualization and GitHub Jet concept adapted from
+    <a href="https://github.com/pratikforge/pratikforge">pratikforge/pratikforge</a>.
+    This repository remains a GitHub fork so the original project and commit history stay directly attributed.
+  </sub>
 </p>
