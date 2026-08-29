@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "xp": 4333500,
-  "combo": 13,
+  "xp": 4561000,
+  "combo": 14,
   "shield": 100,
   "maxCombo": 48,
-  "activeDays": 104,
+  "activeDays": 105,
   "protectedMisses": 37,
   "comboBreaks": 24,
-  "processedThrough": "2026-08-27",
+  "processedThrough": "2026-08-28",
   "dailyCounts": {
     "2025-08-24": 0,
     "2025-08-25": 0,
@@ -378,9 +378,10 @@
     "2026-08-25": 335,
     "2026-08-26": 440,
     "2026-08-27": 643,
-    "2026-08-28": 93
+    "2026-08-28": 318,
+    "2026-08-29": 0
   },
-  "lastEvent": "LEVEL UP → 20",
-  "lastEventDate": "2026-08-27",
-  "lastLevel": 20
+  "lastEvent": "LEVEL UP → 21",
+  "lastEventDate": "2026-08-28",
+  "lastLevel": 21
 }
