@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "xp": 8937000,
-  "combo": 24,
+  "xp": 8940500,
+  "combo": 25,
   "shield": 100,
   "maxCombo": 48,
-  "activeDays": 115,
+  "activeDays": 116,
   "protectedMisses": 38,
   "comboBreaks": 24,
-  "processedThrough": "2026-09-08",
+  "processedThrough": "2026-09-09",
   "dailyCounts": {
     "2025-08-24": 0,
     "2025-08-25": 0,
@@ -390,9 +390,10 @@
     "2026-09-06": 9,
     "2026-09-07": 97,
     "2026-09-08": 2,
-    "2026-09-09": 0
+    "2026-09-09": 3,
+    "2026-09-10": 0
   },
-  "lastEvent": "ACTIVE +16 SHIELD",
-  "lastEventDate": "2026-09-08",
+  "lastEvent": "ACTIVE +18 SHIELD",
+  "lastEventDate": "2026-09-09",
   "lastLevel": 31
 }
