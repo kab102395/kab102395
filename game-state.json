@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "xp": 10900000,
-  "combo": 35,
-  "shield": 72,
+  "xp": 10930500,
+  "combo": 36,
+  "shield": 96,
   "maxCombo": 48,
-  "activeDays": 126,
+  "activeDays": 127,
   "protectedMisses": 43,
   "comboBreaks": 24,
-  "processedThrough": "2026-09-24",
+  "processedThrough": "2026-09-25",
   "dailyCounts": {
     "2025-08-24": 0,
     "2025-08-25": 0,
@@ -406,9 +406,10 @@
     "2026-09-22": 46,
     "2026-09-23": 61,
     "2026-09-24": 19,
-    "2026-09-25": 10
+    "2026-09-25": 34,
+    "2026-09-26": 6
   },
-  "lastEvent": "7-DAY MILESTONE +2,500 XP",
-  "lastEventDate": "2026-09-24",
+  "lastEvent": "ACTIVE +24 SHIELD",
+  "lastEventDate": "2026-09-25",
   "lastLevel": 34
 }
