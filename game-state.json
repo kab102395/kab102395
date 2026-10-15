@@ -7,9 +7,8 @@
   "activeDays": 140,
   "protectedMisses": 46,
   "comboBreaks": 25,
-  "processedThrough": "2026-10-13",
+  "processedThrough": "2026-10-14",
   "dailyCounts": {
-    "2025-09-09": 0,
     "2025-09-10": 1,
     "2025-09-11": 0,
     "2025-09-12": 0,
@@ -409,9 +408,10 @@
     "2026-10-11": 0,
     "2026-10-12": 0,
     "2026-10-13": 0,
-    "2026-10-14": 0
+    "2026-10-14": 0,
+    "2026-10-15": 0
   },
   "lastEvent": "STANDBY DRAIN",
-  "lastEventDate": "2026-10-13",
+  "lastEventDate": "2026-10-14",
   "lastLevel": 35
 }
